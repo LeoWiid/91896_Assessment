@@ -136,3 +136,33 @@ def currency(x):
 
 
 # main routine starts here
+
+
+# set maximum number of pizzas below
+MAX_TICKETS = 5
+tickets_sold = 0
+
+yes_no_list = ["yes", "no"]
+payment_list = ["cash", "credit"]
+
+# Lists to hold ticket details
+all_names = []
+all_ticket_costs = []
+all_surcharge = []
+
+# Dictionary used to create data frame ie: column_name:
+pizza_order_dict = {
+    "Name": all_names,
+    "Ticket Price": all_ticket_costs,
+    "Surcharge": all_surcharge
+}
+
+# Ask user if they want to see the instructions
+want_instructions = string_checker("Do you want to see "
+                                   "menu (y/n): ",
+                                   1, yes_no_list)
+
+if want_menu == "yes":
+    show_menu()
+
+    print()
