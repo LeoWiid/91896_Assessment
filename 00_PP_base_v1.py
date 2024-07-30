@@ -1,42 +1,52 @@
-import pandas
+import pandas as pd
+
 
 # Functions go here
+def yes_no(question):
+    while True:
+        response = input(question).lower()
+
+        if response in ("yes", "y"):
+            return "yes"
+
+        elif response in ("no", "n"):
+            return "no"
+
+        else:
+            print("Please enter yes or no")
 
 # shows menu
 
 def show_menu():
-
-        print('''\n
-    ***** Menu *****
-    Pizza                    Regular(10 inches)     Large(14 inches)
-    Margherita Pizza + Niggas  $15       $18
-    Pepperoni Pizza            $18       $22
-    Hawaiian Pizza             $22       $25
-    Vegetarian Pizza           $17       $20
-    BBQ Chicken Pizza          $21       $23
-    Four Cheese Pizza          $19       $22.50
-    Supreme Pizza              $23       $27
-    Seafood Pizza              $24       $27
-    Gluten-free Pizza          $18       $22.50
-
-
-    Extra Toppings:
-    1.Feta Cheese     $1.50
-    2.Pepperoni       $1.00
-    3.Mushrooms       $0.75
-    4.Green Peppers   $0.50
-    5.Black Olives    $0.75
-    6.Italian Sausage $1.25
-    7.Red Onions      $0.75
-    8.Spinach         $1.00
-    9.Bacon           $1.50
-    10.Tomatoes       $0.75
-
-    Order a Maximum of 5 pizzas
-
-    ******************************''')
+    print('''\n
+***** Menu *****
+Pizza                       Regular(10 inches)     Large(14 inches)
+1. Cheese Pizza                    $15                  $18
+2. Hawaiian Pizza                  $18                  $22
+3. Margherita Pizza                $22                  $25
+4. Pepperoni Pizza                 $17                  $20
+5. Meatlovers Pizza                $21                  $23
+6. Chicken Supreme Pizza           $19                  $22.50
+7. Crispy BBQ Pork Belly Pizza                   $23                  $27
+8. Seafood Pizza                   $24                  $27
+9. Gluten-free Pizza               $18                  $22.50
 
 
+Extra Toppings:
+1.Feta Cheese     $1.50
+2.Pepperoni       $1.00
+3.Mushrooms       $0.75
+4.Green Peppers   $0.50
+5.Black Olives    $0.75
+6.Italian Sausage $1.25
+7.Red Onions      $0.75
+8.Spinach         $1.00
+9.Bacon           $1.50
+10.Tomatoes       $0.75
+
+Order a Maximum of 5 pizzas
+
+******************************''')
 
 # checks that user response is not blank
 
@@ -53,81 +63,21 @@ def not_blank(question):
 
 def num_check(question):
     while True:
-
         try:
             response = int(input(question))
             return response
-
         except ValueError:
             print("Please enter an integer")
-
-# Calculate the order price
-
-
-def order_price_calc(var_type):
-
-
-    # lists to hold ticket details
-    all_names = ["a", "b", "c", "d", "e"]
-    all_tickets_costs = [7.50, 7.50, 10.50, 10.50, 6.50]
-    surcharge = [0, 0, 0.53, 0.53, 0]
-
-    mini_movie_dict = {
-        "Name": all_names,
-        "Ticket Price": all_tickets_costs,
-        "Surcharge": surcharge
-    }
-
-    mini_movie_frame = pandas.DataFrame(mini_movie_dict)
-    mini_movie_frame = mini_movie_frame.set_index('Name')
-
-    # Calculate the total tickets cost (ticket + surcharge)
-    mini_movie_frame['Total'] = mini_movie_frame['Surcharge'] \
-                                + mini_movie_frame['Ticket Price']
-
-    # calculate the profit for each ticket
-    mini_movie_frame['Profit'] = mini_movie_frame['Ticket Price'] - 5
-
-    # calculate ticket and profit totals
-    total = mini_movie_frame['Total'].sum()
-    profit = mini_movie_frame['Profit'].sum()
-
-    # Currency Formatting (uses currency function)
-    add_dollars = ['Ticket Price', 'Surcharge', 'Total', 'Profit']
-    for var_item in add_dollars:
-        mini_movie_frame[var_item] = mini_movie_frame[var_item].apply(currency)
-
-    print("---- Ticket Data ----")
-    print()
-
-    # output table with ticket data
-    print(mini_movie_frame)
-
-    print()
-    print("----- Ticket Cost / Profit -----")
-
-    # output total tickets sales and profit
-    print("Total Ticket Sales: ${:.2f}".format(total))
-    print("Total Profit : ${:.2f}".format(profit))
-
 
 # checks that users enter a valid response (e.g. yes / no
 # cash / credit) based on a list of options
 
-def string_checker(question, num_letters, valid_responses):
-    error = "Please choose {} or {}".format(valid_responses[0],
-                                            valid_responses[1])
-
+def string_checker(question, valid_responses):
     while True:
-
         response = input(question).lower()
-
-        for item in valid_responses:
-            if response == item[:num_letters] or response == item:
-                return item
-
-
-
+        if response in valid_responses or response in [item[0] for item in valid_responses]:
+            return response
+        print(f"Please enter a valid response from {valid_responses}")
 
 # currency formatting function
 
@@ -135,34 +85,105 @@ def currency(x):
     return "${:.2f}".format(x)
 
 
-# main routine starts here
+# Main routine starts here
+print("Welcome to Pizza's Pitaria")
 
-
-# set maximum number of pizzas below
-MAX_TICKETS = 5
-tickets_sold = 0
+MAX_PIZZAS = 5
 
 yes_no_list = ["yes", "no"]
-payment_list = ["cash", "credit"]
+delivery_option = ["delivery", "pickup"]
 
-# Lists to hold ticket details
-all_names = []
-all_ticket_costs = []
-all_surcharge = []
+# List to hold pizza details
+all_name = ["Cheese", "Hawaiian", "Margherita", "Pepperoni", "Meatlovers",
+            "Chicken Supreme", "Crispy BBQ Pork Belly", "Lamb Kebab", "Peri Peri Chicken",
+            "Chicken and Camembert"]
+regular_pizza_cost = [7.00, 7.00, 7.00, 7.00, 10.00,
+                    10.00, 10.00, 10.00, 15.00, 15.00]
+large_pizza_cost = [10.00, 10.00, 10.00, 10.00, 13.00,
+                    13.00, 13.00, 13.00, 18.00, 18.00]
 
 # Dictionary used to create data frame ie: column_name:
 pizza_order_dict = {
-    "Name": all_names,
-    "Ticket Price": all_ticket_costs,
-    "Surcharge": all_surcharge
+    "Name": all_name,
+    "Regular Pizza Cost": regular_pizza_cost,
+    "Large Pizza Cost": large_pizza_cost,
 }
 
-# Ask user if they want to see the instructions
-want_instructions = string_checker("Do you want to see "
-                                   "menu (y/n): ",
-                                   1, yes_no_list)
+# Select name for order
+name = not_blank("Please enter your name for the order: ")
 
-if want_menu == "yes":
-    show_menu()
+# Ask if user wants pickup or delivery
+delivery = string_checker("Do you want pickup or delivery? ", delivery_option)
 
-    print()
+if delivery == "delivery":
+    print("There is a $6 surcharge")
+
+# Initialize lists to store order details
+item_list = []
+quantity_list = []
+price_list = []
+
+# Loop to place order
+while True:
+    want_order = yes_no("Would you like to place an order? ")
+
+    if want_order == "yes":
+        show_menu()
+
+        # Select pizza
+        pizza_choice = num_check("Enter the pizza number (1-10): ")
+        if 1 <= pizza_choice <= 10:
+            pizza_name = all_name[pizza_choice - 1]
+            size_choice = string_checker("Enter the size (regular/large): ", ["regular", "large"])
+
+            if size_choice == "regular":
+                price = regular_pizza_cost[pizza_choice - 1]
+            else:
+                price = large_pizza_cost[pizza_choice - 1]
+
+            quantity = num_check(f"How many {pizza_name} pizzas would you like? ")
+
+            if quantity <= MAX_PIZZAS:
+                item_list.append(pizza_name)
+                quantity_list.append(quantity)
+                price_list.append(price * quantity)
+            else:
+                print(f"Sorry, you can only order up to {MAX_PIZZAS} pizzas.")
+        else:
+            print("Invalid pizza choice. Please try again.")
+
+        more_pizzas = yes_no("Would you like to order more pizzas? ")
+        if more_pizzas == "no":
+            break
+    else:
+        break
+
+# Create DataFrame
+variable_dict = {
+    'Item': item_list,
+    'Quantity': quantity_list,
+    'Price': price_list
+}
+expense_frame = pd.DataFrame(variable_dict)
+expense_frame = expense_frame.set_index('Item')
+
+# Calculate cost of each component
+expense_frame['Cost'] = expense_frame['Quantity'] * expense_frame['Price']
+
+# Find sub-total
+sub_total = expense_frame['Cost'].sum()
+
+# Currency Formatting (uses currency function)
+add_dollars = ['Price', 'Cost']
+for item in add_dollars:
+    expense_frame[item] = expense_frame[item].apply(currency)
+
+if delivery == "delivery":
+    sub_total += 6  # Add delivery surcharge
+
+# Print results
+print("\nYour order summary:")
+print(expense_frame)
+print(f"Subtotal: {currency(sub_total)}")
+
+print("Thank you for your order!")

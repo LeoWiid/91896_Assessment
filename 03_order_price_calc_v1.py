@@ -1,6 +1,6 @@
 
 # Calculate the ticket price based on the age
-def calc_ticket_price(var_age):
+def order_price_calc(var_age):
 
     # ticket is $7.50 for users under 16
     if var_age < 16:
