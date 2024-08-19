@@ -1,3 +1,4 @@
+import pandas
 import pandas as pd
 import re
 
@@ -134,13 +135,19 @@ topping_names = ["Feta Cheese", "Pepperoni", "Mushrooms", "Green Peppers", "Blac
 topping_costs = [1.50, 1.00, 0.75, 0.50, 0.75, 1.25, 0.75, 1.00, 1.50, 0.75]
 
 # List to hold pizza details
-all_name = ["Cheese Pizza", "Hawaiian Pizza", "Margherita Pizza", "Pepperoni Pizza", "Meatlovers Pizza",
-            "Chicken Supreme Pizza", "Crispy BBQ Pork Belly Pizza", "Seafood Pizza", "Gluten-free Pizza",
-            "Lamb Kebab Pizza"]
+all_name = ["Cheese", "Hawaiian", "Margherita", "Pepperoni", "Meatlovers",
+            "Chicken Supreme", "Crispy BBQ Pork Belly", "Seafood", "Gluten-free",
+            "Lamb Kebab"]
 regular_pizza_cost = [15.00, 18.00, 22.00, 17.00, 21.00,
                       19.00, 23.00, 24.00, 18.00, 15.00]
 large_pizza_cost = [18.00, 22.00, 25.00, 20.00, 23.00,
                     22.50, 27.00, 27.00, 22.50, 18.00]
+
+pizza_menu = {
+    "Pizza": all_name,
+    "Regular(10 inches)": regular_pizza_cost,
+    "Large": large_pizza_cost
+}
 
 # Select name for order
 name = not_blank("Please enter your name for the order: ")
@@ -161,11 +168,15 @@ topping_price_list = []
 total_topping_cost = 0.00
 
 # Show pizza menu initially
-show_pizza_menu()
+full_pizza_menu = pandas.DataFrame(pizza_menu)
+full_pizza_menu.index += 1
+print(full_pizza_menu)
+#show_pizza_menu()
 
 # Loop to place order
 while True:
     # Select pizza
+    print()
     pizza_choice = num_check("Enter the pizza number (1-10): ")
     if 1 <= pizza_choice <= 10:
         pizza_name = all_name[pizza_choice - 1]
