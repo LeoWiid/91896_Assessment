@@ -1,7 +1,6 @@
 import pandas as pd
 import re
 
-
 # Functions go here
 def yes_no(question):
     while True:
@@ -187,39 +186,41 @@ while True:
                 price_per_pizza_list.append(price_per_pizza)
                 total_pizza_cost += total_price
 
-                # Ask for extra toppings
-                extra_toppings = yes_no("Would you like extra toppings? ")
-                if extra_toppings == "yes":
-                    show_topping_menu()
-                    toppings = []
-                    topping_cost = 0.00
-                    topping_quantities = [0] * 10  # Initialize a list to store quantities for each topping
+                # Handle toppings for each individual pizza
+                for _ in range(quantity):
+                    print(f"\nAdding toppings for a {pizza_name} ({size_choice.capitalize()}) pizza.")
+                    extra_toppings = yes_no("Would you like extra toppings? ")
+                    if extra_toppings == "yes":
+                        show_topping_menu()
+                        toppings = []
+                        topping_cost = 0.00
+                        topping_quantities = [0] * 10  # Initialize a list to store quantities for each topping
 
-                    while True:
-                        topping_choice = num_check("Enter the topping number (1-10, type 0 when finished): ")
-                        if topping_choice == 0:
-                            break
-                        elif 1 <= topping_choice <= 10:
-                            topping_quantities[topping_choice - 1] += 1  # Increment the quantity for the chosen topping
-                        else:
-                            print("Invalid topping choice. Please try again.")
+                        while True:
+                            topping_choice = num_check("Enter the topping number (1-10, type 0 when finished): ")
+                            if topping_choice == 0:
+                                break
+                            elif 1 <= topping_choice <= 10:
+                                topping_quantities[topping_choice - 1] += 1  # Increment the quantity for the chosen topping
+                            else:
+                                print("Invalid topping choice. Please try again.")
 
-                    # Calculate topping costs and prepare topping details
-                    for index, quantity in enumerate(topping_quantities):
-                        if quantity > 0:
-                            topping_name = topping_names[index]
-                            topping_price = topping_costs[index]
-                            topping_cost += topping_price * quantity
-                            toppings.append(f"{topping_name} (+{currency(topping_price * quantity)})")
+                        # Calculate topping costs and prepare topping details
+                        for index, quantity in enumerate(topping_quantities):
+                            if quantity > 0:
+                                topping_name = topping_names[index]
+                                topping_price = topping_costs[index]
+                                topping_cost += topping_price * quantity
+                                toppings.append(f"{topping_name} (+{currency(topping_price * quantity)})")
 
-                    topping_item_list.append(f"{quantity}x {pizza_name} ({size_choice.capitalize()})")
-                    topping_list.append("\n".join(toppings) if toppings else "No extra toppings")
-                    topping_price_list.append(topping_cost)  # Calculate the total topping cost for this pizza
-                    total_topping_cost += topping_cost  # Update total topping cost
-                else:
-                    topping_item_list.append(f"{quantity}x {pizza_name} ({size_choice.capitalize()})")
-                    topping_list.append("No extra toppings")
-                    topping_price_list.append(0.00)
+                        topping_item_list.append(f"{pizza_name} ({size_choice.capitalize()})")
+                        topping_list.append("\n".join(toppings) if toppings else "No extra toppings")
+                        topping_price_list.append(topping_cost)  # Calculate the total topping cost for this pizza
+                        total_topping_cost += topping_cost  # Update total topping cost
+                    else:
+                        topping_item_list.append(f"{pizza_name} ({size_choice.capitalize()})")
+                        topping_list.append("No extra toppings")
+                        topping_price_list.append(0.00)
 
                 break  # Exit the quantity loop
 

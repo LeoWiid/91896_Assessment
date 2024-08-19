@@ -11,10 +11,10 @@ Four Cheese Pizza          $19       $22.50
 Supreme Pizza              $23       $27
 Seafood Pizza              $24       $27
 Gluten-free Pizza          $18       $22.50
-    
+
 Regular: 12
 Large: 14
-    
+
 Extra Toppings:
 1.Feta Cheese     $1.50
 2.Pepperoni       $1.00
