@@ -1,3 +1,4 @@
+import pandas
 import pandas as pd
 import re
 
@@ -11,6 +12,7 @@ def yes_no(question):
             return "no"
         else:
             print("Please enter yes or no")
+
 
 # Shows pizza menu
 def show_pizza_menu():
@@ -32,6 +34,7 @@ Order a Maximum of 5 pizzas
 
 ******************************''')
 
+
 # Shows topping menu
 def show_topping_menu():
     print('''\n
@@ -50,20 +53,18 @@ Extra Toppings:
 
 ******************************''')
 
+
 # Checks that user response is not blank
-def not_blank(question, check_type="text"):
+def not_blank(question):
     while True:
         response = input(question)
         if response == "":
             print("Sorry this can't be blank. Please try again")
-        elif check_type == "text" and not re.match("^[A-Za-z ]*$", response):
+        elif not re.match("^[A-Za-z ]*$", response):
             print("Sorry, the name can only contain letters. Please try again")
-        elif check_type == "numeric" and not re.match("^[0-9 ]*$", response):
-            print("Sorry, the phone number can only contain numbers and spaces. Please try again")
-        elif check_type == "alphanumeric" and not re.match("^[A-Za-z0-9 ]*$", response):
-            print("Sorry, the address can only contain letters, numbers, and spaces. Please try again")
         else:
             return response
+
 
 # Checks users enter an integer to a given question
 def num_check(question):
@@ -74,6 +75,7 @@ def num_check(question):
         except ValueError:
             print("Please enter an integer")
 
+
 # Checks that users enter a valid response (e.g. yes / no
 # cash / credit) based on a list of options
 def string_checker(question, valid_responses):
@@ -81,31 +83,15 @@ def string_checker(question, valid_responses):
         response = input(question).lower()
         if response in valid_responses:
             return response
-        if any(response == item[:len(response)] for item in valid_responses):
-            return [item for item in valid_responses if response == item[:len(response)]][0]
+        if response in [item[0] for item in valid_responses]:
+            return valid_responses[[item[0] for item in valid_responses].index(response)]
         print(f"Please enter a valid response from {valid_responses}")
+
 
 # Currency formatting function
 def currency(x):
     return "${:.2f}".format(x)
 
-# Confirm order function
-def confirm_order():
-    print("Please review your order.")
-    confirmation = yes_no("Do you want to confirm the order? ")
-    if confirmation == "no":
-        print("Order cancelled.")
-        exit()
-    return True
-
-# Cash or credit function
-def cash_or_credit():
-    payment_method = string_checker("Would you like to pay by cash or credit? ", ["cash", "credit"])
-    if payment_method == "credit":
-        print("You have chosen to pay by credit.")
-    else:
-        print("You have chosen to pay by cash.")
-    return payment_method
 
 # Final order summary function
 def print_order_summary(expense_frame, topping_frame, delivery, pizza_total, topping_total, sub_total):
@@ -134,6 +120,7 @@ def print_order_summary(expense_frame, topping_frame, delivery, pizza_total, top
     print(f"Total cost: {currency(sub_total)}")
     print("Thank you for your order!")
 
+
 # Main routine starts here
 print("Welcome to Pizza's Pitaria")
 
@@ -148,13 +135,19 @@ topping_names = ["Feta Cheese", "Pepperoni", "Mushrooms", "Green Peppers", "Blac
 topping_costs = [1.50, 1.00, 0.75, 0.50, 0.75, 1.25, 0.75, 1.00, 1.50, 0.75]
 
 # List to hold pizza details
-all_name = ["Cheese Pizza", "Hawaiian Pizza", "Margherita Pizza", "Pepperoni Pizza", "Meatlovers Pizza",
-            "Chicken Supreme Pizza", "Crispy BBQ Pork Belly Pizza", "Seafood Pizza", "Gluten-free Pizza",
-            "Lamb Kebab Pizza"]
+all_name = ["Cheese", "Hawaiian", "Margherita", "Pepperoni", "Meatlovers",
+            "Chicken Supreme", "Crispy BBQ Pork Belly", "Seafood", "Gluten-free",
+            "Lamb Kebab"]
 regular_pizza_cost = [15.00, 18.00, 22.00, 17.00, 21.00,
                       19.00, 23.00, 24.00, 18.00, 15.00]
 large_pizza_cost = [18.00, 22.00, 25.00, 20.00, 23.00,
                     22.50, 27.00, 27.00, 22.50, 18.00]
+
+pizza_menu = {
+    "Pizza": all_name,
+    "Regular(10 inches)": regular_pizza_cost,
+    "Large": large_pizza_cost
+}
 
 # Select name for order
 name = not_blank("Please enter your name for the order: ")
@@ -164,8 +157,6 @@ delivery = string_checker("Do you want pickup or delivery? ", delivery_option)
 
 if delivery == "delivery":
     print("There is a $6 surcharge")
-    address = not_blank("Please enter your delivery address: ", check_type="alphanumeric")
-    phone_number = not_blank("Please enter your phone number: ", check_type="numeric")
 
 # Initialize lists to store order details
 item_list = []
@@ -177,11 +168,15 @@ topping_price_list = []
 total_topping_cost = 0.00
 
 # Show pizza menu initially
-show_pizza_menu()
+full_pizza_menu = pandas.DataFrame(pizza_menu)
+full_pizza_menu.index += 1
+print(full_pizza_menu)
+#show_pizza_menu()
 
 # Loop to place order
 while True:
     # Select pizza
+    print()
     pizza_choice = num_check("Enter the pizza number (1-10): ")
     if 1 <= pizza_choice <= 10:
         pizza_name = all_name[pizza_choice - 1]
@@ -202,9 +197,9 @@ while True:
                 price_per_pizza_list.append(price_per_pizza)
                 total_pizza_cost += total_price
 
-                # Ask for extra toppings for each pizza ordered
-                for i in range(quantity):
-                    print(f"\nSelect toppings for {pizza_name} #{i+1}:")
+                # Handle toppings for each individual pizza
+                for _ in range(quantity):
+                    print(f"\nAdding toppings for a {pizza_name} ({size_choice.capitalize()}) pizza.")
                     extra_toppings = yes_no("Would you like extra toppings? ")
                     if extra_toppings == "yes":
                         show_topping_menu()
@@ -221,64 +216,52 @@ while True:
                             else:
                                 print("Invalid topping choice. Please try again.")
 
-                        # Calculate topping costs and prepare topping summary
+                        # Calculate topping costs and prepare topping details
                         for index, quantity in enumerate(topping_quantities):
                             if quantity > 0:
                                 topping_name = topping_names[index]
-                                topping_cost += topping_costs[index] * quantity
-                                toppings.append(f"{quantity}x {topping_name}")
+                                topping_price = topping_costs[index]
+                                topping_cost += topping_price * quantity
+                                toppings.append(f"{topping_name} (+{currency(topping_price * quantity)})")
 
-                        if toppings:
-                            topping_summary = "\n".join(toppings)
-                            topping_item_list.append(f"Toppings for {pizza_name} #{i+1}")
-                            topping_list.append(topping_summary)
-                            topping_price_list.append(topping_cost)
-                            total_topping_cost += topping_cost
-                        else:
-                            topping_item_list.append(f"Toppings for {pizza_name} #{i+1}")
-                            topping_list.append("No extra toppings")
-                            topping_price_list.append(0.00)
-
+                        topping_item_list.append(f"{pizza_name} ({size_choice.capitalize()})")
+                        topping_list.append("\n".join(toppings) if toppings else "No extra toppings")
+                        topping_price_list.append(topping_cost)  # Calculate the total topping cost for this pizza
+                        total_topping_cost += topping_cost  # Update total topping cost
                     else:
-                        topping_item_list.append(f"Toppings for {pizza_name} #{i+1}")
+                        topping_item_list.append(f"{pizza_name} ({size_choice.capitalize()})")
                         topping_list.append("No extra toppings")
                         topping_price_list.append(0.00)
 
-                break
-            else:
-                print(f"Please order no more than {MAX_PIZZAS} pizzas.")
+                break  # Exit the quantity loop
 
-        another_pizza = yes_no("Would you like to order another pizza? ")
-        if another_pizza == "no":
-            break
+            else:
+                print(f"Sorry, you can only order up to {MAX_PIZZAS} pizzas. Please enter a valid number.")
 
     else:
-        print("Invalid pizza choice. Please choose a pizza number between 1 and 10.")
+        print("Invalid pizza choice. Please try again.")
 
-# Create dataframes to store order details
-expense_data = {
+    # Ask if user wants to order more pizzas and show the menu again if they do
+    more_pizzas = yes_no("Would you like to order more pizzas? ")
+    if more_pizzas == "yes":
+        show_pizza_menu()  # Show pizza menu again for the next order
+    else:
+        break
+
+# Create DataFrame for pizzas
+expense_frame = pd.DataFrame({
     'Item': item_list,
     'Price Per Pizza': price_per_pizza_list
-}
+})
+expense_frame = expense_frame.set_index('Item')
 
-topping_data = {
-    'Toppings For': topping_item_list,
-    'Toppings': topping_list,
-    'Topping Price': topping_price_list
-}
+# Create DataFrame for toppings
+topping_frame = pd.DataFrame({
+    'Pizza': topping_item_list,
+    'Toppings': topping_list
+})
+topping_frame = topping_frame.set_index('Pizza')
 
-expense_frame = pd.DataFrame(expense_data)
-topping_frame = pd.DataFrame(topping_data)
-
-# Calculate the subtotal
-sub_total = total_pizza_cost + total_topping_cost
-
-# Confirm the order
-if confirm_order():
-    print_order_summary(expense_frame, topping_frame, delivery, total_pizza_cost, total_topping_cost, sub_total)
-
-# Payment method
-payment_method = cash_or_credit()
-
-# End of the order process
-print("\nThank you for choosing Pizza's Pitaria. Enjoy your meal!")
+# Print the final order summary
+print_order_summary(expense_frame, topping_frame, delivery, total_pizza_cost, total_topping_cost,
+                    total_pizza_cost + total_topping_cost)

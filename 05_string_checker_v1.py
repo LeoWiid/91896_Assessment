@@ -1,17 +1,11 @@
-def string_checker(question, valid_responses):
+def string_checker(question, num_letters, valid_responses):
+    error = "Please choose {} or {}".format(valid_responses[0],
+                                            valid_responses[1])
+
     while True:
-        error = f"Please enter a valid response from {valid_responses}"
+
         response = input(question).lower()
 
         for item in valid_responses:
-            if item == response or response == item[:2]:
+            if response == item[:num_letters] or response == item:
                 return item
-        print(error)
-
-#Main Routine
-
-payment_option = ["cash", "credit"]
-
-payment_method = string_checker("How would you like to pay (cash/credit)? ", payment_option)
-
-print(f"Thank you! Your order has been confirmed. You will pay with {payment_method}.")

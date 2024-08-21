@@ -21,23 +21,13 @@ def num_check(question, min_value=None, max_value=None):
         except ValueError:
             print("Please enter an integer.")
 
-def string_checker(question, valid_responses):
+def string_checker(question, num, valid_responses):
     while True:
         error = f"Please enter a valid response from {valid_responses}"
         response = input(question).lower()
 
         for item in valid_responses:
-            if item == response or response == item[:2]:
-                return item
-        print(error)
-
-def string_checker2(question, valid_responses):
-    while True:
-        error = f"Please enter a valid response from {valid_responses}"
-        response = input(question).lower()
-
-        for item in valid_responses:
-            if item == response or response == item[0]:
+            if item == response or response == item[:num]:
                 return item
         print(error)
 
@@ -104,7 +94,7 @@ def place_order():
     name = not_blank("Please enter your name for the order: ")
 
     delivery_option = ["delivery", "pickup"]
-    delivery = string_checker2("Do you want pickup or delivery? ", delivery_option)
+    delivery = string_checker("Do you want pickup or delivery? ",0,delivery_option)
 
     if delivery == "delivery":
         print("There is a $6 surcharge.")
@@ -127,7 +117,7 @@ def place_order():
         user_order_id = num_check("Please enter the number of the pizza you want to order (1-10): ", min_value=1, max_value=10)
         user_order_name = pizza_id_checker(user_order_id)
         size_option = ["regular", "large"]
-        size_pizza = string_checker2("What size would you like? (regular/large): ", size_option)
+        size_pizza = string_checker("What size would you like? (regular/large): ",0, size_option)
 
         cost = 7 if size_pizza == "regular" else 10
 
@@ -136,7 +126,7 @@ def place_order():
         topping_total_cost = 0
 
         yes_no_list = ["yes", "no"]
-        want_toppings = string_checker2("Would you like to add extra toppings? ", yes_no_list)
+        want_toppings = string_checker("Would you like to add extra toppings? ",0, yes_no_list)
         while want_toppings == "yes" and len(topping_list) < MAX_TOPPINGS:
             print(toppings_menu_frame)
             topping_order_id = num_check("Please enter the number of the topping you want to order (1-10): ", min_value=1, max_value=10)
@@ -151,7 +141,7 @@ def place_order():
             topping_total_cost += topping_cost
 
             if len(topping_list) < MAX_TOPPINGS:
-                want_toppings = string_checker2("Would you like to add another topping? ", yes_no_list)
+                want_toppings = string_checker("Would you like to add another topping? ",0, yes_no_list)
             else:
                 print(f"You've reached the maximum of {MAX_TOPPINGS} toppings.")
 
@@ -191,7 +181,7 @@ def place_order():
 
     # Select payment method
     payment_option = ["cash", "credit"]
-    payment_method = string_checker("How would you like to pay (cash/credit)? ", payment_option)
+    payment_method = string_checker("How would you like to pay (cash/credit)? ",2, payment_option)
 
     if payment_method == "credit":
         print("There is a 2% surcharge for credit payments.")
@@ -204,7 +194,7 @@ def place_order():
         print(f"Your pizza will be delivered to {address}. We will contact you at {phone_number} if needed.")
 
     yes_no_list = ["yes", "no"]
-    confirm_order = string_checker2("Do you want to confirm the order (yes/no)? ", yes_no_list)
+    confirm_order = string_checker("Do you want to confirm the order (yes/no)? ",0, yes_no_list)
 
     if confirm_order == "yes":
         print(f"Thank you! Your order has been confirmed. You will pay with {payment_method}.")
@@ -214,7 +204,7 @@ def place_order():
 while True:
     place_order()
     yes_no_list = ["yes", "no"]
-    another_order = string_checker2("Do you want to place another order? (yes/no): ", yes_no_list)
+    another_order = string_checker("Do you want to place another order? (yes/no): ",0, yes_no_list)
     if another_order == "no":
         print("Thank you for choosing Pizza's Pitaria! Goodbye!")
         break
